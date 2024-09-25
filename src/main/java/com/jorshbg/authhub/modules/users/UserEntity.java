@@ -2,18 +2,18 @@ package com.jorshbg.authhub.modules.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jorshbg.authhub.modules.logs.LogEntity;
-import com.jorshbg.authhub.modules.role_permissions.RolePermission;
-import com.jorshbg.authhub.modules.roles.RoleEntity;
 import com.jorshbg.authhub.modules.user_roles.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 import java.util.List;
 import java.util.UUID;
 
+@Data
 @Entity
 @Table(name = "users")
 public class UserEntity {
@@ -32,7 +32,7 @@ public class UserEntity {
     @Column(unique = true)
     @NotBlank
     @NotNull
-    private String userName;
+    private String username;
 
     @NotBlank
     private String photoUrl;
@@ -51,6 +51,9 @@ public class UserEntity {
     @NotBlank
     @Size(max = 80)
     private String password;
+
+    @NotNull
+    private Boolean status = true;
 
     @JsonIgnore
     @OneToMany(mappedBy = "byUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

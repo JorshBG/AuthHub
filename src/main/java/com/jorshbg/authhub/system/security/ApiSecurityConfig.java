@@ -47,7 +47,7 @@ public class ApiSecurityConfig {
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/api/v1/**", configuration);
+		source.registerCorsConfiguration("/**", configuration);
 		return source;
     }
 
