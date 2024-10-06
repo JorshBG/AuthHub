@@ -18,6 +18,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+    private final Jwt jwt;
+
+    public AuthenticationFilter(Jwt jwt) {
+        this.jwt = jwt;
+    }
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         Auth credentials = new Auth();
@@ -39,14 +46,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         var userDetails = (UserDetailsImpl) authResult.getPrincipal();
 
-        String token = new Jwt().temporalToken(userDetails.getUsername(), new LinkedHashMap<>(Map.of(
+        String token = jwt.temporalToken(userDetails.getUsername(), new LinkedHashMap<>(Map.of(
                 "Authorities", userDetails.getAuthoritiesAsString()
         )));
         response.addHeader("Authorization", "Bearer " + token);
-        var obj = new LinkedHashMap<String, String>(Map.of(
-                "username", userDetails.getUsername(),
+        var obj = new LinkedHashMap<>(Map.of(
                 "token", token,
-                "type", "bearer"
+                "type", "bearer",
+                "expiresIn", Jwt.TEMPORAL_EXPIRATION_TIME
         ));
         response.getWriter().write(new ObjectMapper().writeValueAsString(obj));
         response.setContentType("application/json");

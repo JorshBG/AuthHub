@@ -5,6 +5,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,16 +16,33 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class Jwt {
 
-    private static final SecretKey KEY = Jwts.SIG.HS256.key().build();
-    private static final long TEMPORAL_EXPIRATION_TIME =  5 * 60 * 1000;
+    @Value("${jwt.key}")
+    private String stringKey;
+
+    @Value("${jwt.audiences}")
+    private String stringAudiences;
+
+    @Value("${jwt.issuer}")
+    private String issuer;
+
+    private SecretKey key;
+    public static final long TEMPORAL_EXPIRATION_TIME =  5 * 60 * 1000;
     private static final long REFRESH_EXPIRATION_TIME =  2 * 60 * 60 * 1000;
-    private static final Collection<String> AUDIENCES = List.of("http://localhost:4200");
+    private Collection<String> audiences;
+
+    @PostConstruct
+    private void init(){
+        this.key = Keys.hmacShaKeyFor(stringKey.getBytes(StandardCharsets.UTF_8));
+        this.audiences = List.of(stringAudiences.split(","));
+    }
 
     private String generate(String subject, long expirationTime) {
         return this.generate(subject, expirationTime, null);
@@ -30,12 +51,12 @@ public class Jwt {
     private String generate(String subject, long expirationTime, Map<String, Object> claims) {
         return Jwts.builder()
                 .subject(subject)
-                .audience().add("http://localhost:4200").and()
+                .audience().add(audiences).and()
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .claims(claims)
-                .issuer("http://localhost:8088/api/v1")
-                .signWith(KEY)
+                .issuer(issuer)
+                .signWith(key)
                 .compact();
     }
 
@@ -52,11 +73,11 @@ public class Jwt {
         claims.put("extended", "true");
         return Jwts.builder()
                 .subject(subject)
-                .audience().add(AUDIENCES).and()
+                .audience().add(audiences).and()
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .claims(claims)
-                .issuer("http://localhost:8088/api/v1")
-                .signWith(KEY)
+                .issuer(issuer)
+                .signWith(key)
                 .compact();
     }
 
@@ -66,7 +87,7 @@ public class Jwt {
     }
 
     private Jws<Claims> parse(String token) {
-        return Jwts.parser().verifyWith(KEY).build().parseSignedClaims(token);
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
     }
 
     public boolean validate(String token) {
@@ -75,7 +96,7 @@ public class Jwt {
 
     public boolean validateAudience(String token){
         Jws<Claims> parsed = this.parse(token);
-        for(String audience : AUDIENCES) {
+        for(String audience : audiences) {
             if (parsed.getPayload().getAudience().contains(audience)) {
                 return true;
             }
