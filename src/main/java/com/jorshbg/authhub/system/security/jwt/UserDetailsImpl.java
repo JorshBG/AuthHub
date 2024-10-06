@@ -7,7 +7,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -25,15 +24,17 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return "";
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return user.getUsername();
     }
 
     public String getAuthoritiesAsString() {
-        return null;
+        StringBuilder builder = new StringBuilder();
+        user.getRoles().forEach(role -> builder.append(role.getRole().getName()).append(" "));
+        return builder.toString();
     }
 }
