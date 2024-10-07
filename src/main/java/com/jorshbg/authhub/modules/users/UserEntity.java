@@ -1,6 +1,8 @@
 package com.jorshbg.authhub.modules.users;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jorshbg.authhub.modules.logs.LogEntity;
 import com.jorshbg.authhub.modules.user_roles.UserRole;
 import jakarta.persistence.*;
@@ -11,9 +13,12 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -52,6 +57,7 @@ public class UserEntity {
     @NotBlank
     private String phoneNumber;
 
+    @JsonIgnore
     @NotBlank
     @Size(max = 80)
     private String password;
@@ -63,6 +69,14 @@ public class UserEntity {
     @OneToMany(mappedBy = "byUser", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<LogEntity> logs;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER, mappedBy = "user")
     private List<UserRole> roles;
+
+    @JsonProperty("roles")
+    public List<String> getArrayRoles(){
+        return this.roles.stream()
+                .map(role -> role.getRole().getName())
+                .collect(Collectors.toList());
+    }
 }
