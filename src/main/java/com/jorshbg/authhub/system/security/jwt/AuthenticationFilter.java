@@ -46,15 +46,16 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         var userDetails = (UserDetailsImpl) authResult.getPrincipal();
 
-        String token = jwt.temporalToken(userDetails.getUsername(), new LinkedHashMap<>(Map.of(
+        String accessToken = jwt.getAccessToken(userDetails.getUsername(), new LinkedHashMap<>(Map.of(
                 "Authorities", userDetails.getAuthoritiesAsString()
         )));
-        response.addHeader("Authorization", "Bearer " + token);
-        var obj = new LinkedHashMap<>(Map.of(
-                "token", token,
-                "type", "bearer",
-                "expiresIn", Jwt.TEMPORAL_EXPIRATION_TIME
-        ));
+        String refreshToken = jwt.getRefreshToken(userDetails.getUsername(), new LinkedHashMap<>());
+        response.addHeader("Authorization", "Bearer " + accessToken);
+        var obj = new LinkedHashMap<>();
+        obj.put("access_token", accessToken);
+        obj.put("token_type", "bearer");
+        obj.put("expires_in", Jwt.ACCESS_TOKEN_EXPIRATION_TIME);
+        obj.put("refresh_token", refreshToken);
         response.getWriter().write(new ObjectMapper().writeValueAsString(obj));
         response.setContentType("application/json");
         response.getWriter().flush();
@@ -68,6 +69,5 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"" + failed.getMessage() + "\"}");
         response.getWriter().flush();
-        super.unsuccessfulAuthentication(request, response, failed);
     }
 }
