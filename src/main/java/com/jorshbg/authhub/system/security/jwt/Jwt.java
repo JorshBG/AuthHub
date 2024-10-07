@@ -79,10 +79,6 @@ public class Jwt {
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
     }
 
-    public boolean validate(String token) {
-        return this.validateAudience(token) && !this.isExpired(token);
-    }
-
     public boolean validateAudience(String token){
         Jws<Claims> parsed = this.parse(token);
         for(String audience : audiences) {
@@ -100,7 +96,8 @@ public class Jwt {
     public UsernamePasswordAuthenticationToken getAuthentication(String token){
         try {
             Claims claims = this.parse(token).getPayload();
-            if(!this.validate(token))
+
+            if(!this.validateAudience(token))
                 throw new AuthHubException(HttpStatus.UNAUTHORIZED, "Invalid or expired JWT token");
 
             String tokenType = claims.get("type", String.class);
@@ -109,6 +106,11 @@ public class Jwt {
 
             if(tokenType.equals("refresh"))
                 throw new AuthHubException(HttpStatus.FORBIDDEN, "Only access tokens are allowed");
+
+            if(!tokenType.equals("permanent")){
+                if(this.isExpired(token))
+                    throw new AuthHubException(HttpStatus.FORBIDDEN, "Expired JWT token");
+            }
 
             String stringAuthorities = claims.get("Authorities", String.class);
             Collection<? extends GrantedAuthority> authorities = Arrays.stream(stringAuthorities.split(" ")).toList().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
