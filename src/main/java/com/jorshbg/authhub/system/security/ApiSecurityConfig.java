@@ -19,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -52,16 +53,23 @@ public class ApiSecurityConfig {
 
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(authorized -> {
-           authorized.requestMatchers("/api/v1/auth/**").permitAll();
+           authorized.requestMatchers("/auth/**").permitAll();
            authorized.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
            authorized.anyRequest().authenticated();
         });
+        http.exceptionHandling(handler -> {
+           handler.accessDeniedHandler(deniedHandler());
+        });
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.csrf(AbstractHttpConfigurer::disable);
         http.addFilter(authFilter);
         http.addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
         http.cors(cors -> cors.configurationSource(apiCors()));
         return http.build();
+    }
+
+    @Bean
+    AccessDeniedHandler deniedHandler(){
+        return new DeniedHandler();
     }
 
     CorsConfigurationSource apiCors() {
