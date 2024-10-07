@@ -1,10 +1,7 @@
 package com.jorshbg.authhub.system.security.jwt;
 
 import com.jorshbg.authhub.system.exceptions.AuthHubException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -34,18 +31,14 @@ public class Jwt {
     private String issuer;
 
     private SecretKey key;
-    public static final long TEMPORAL_EXPIRATION_TIME =  5 * 60 * 1000;
-    private static final long REFRESH_EXPIRATION_TIME =  2 * 60 * 60 * 1000;
+    public static final long ACCESS_TOKEN_EXPIRATION_TIME =  10 * 60 * 1000;
+    private static final long REFRESH_TOKEN_EXPIRATION_TIME =  2 * 60 * 60 * 1000;
     private Collection<String> audiences;
 
     @PostConstruct
     private void init(){
         this.key = Keys.hmacShaKeyFor(stringKey.getBytes(StandardCharsets.UTF_8));
         this.audiences = List.of(stringAudiences.split(","));
-    }
-
-    private String generate(String subject, long expirationTime) {
-        return this.generate(subject, expirationTime, null);
     }
 
     private String generate(String subject, long expirationTime, Map<String, Object> claims) {
@@ -60,17 +53,18 @@ public class Jwt {
                 .compact();
     }
 
-    public String temporalToken(String subject, Map<String, Object> claims) {
-        return this.generate(subject, TEMPORAL_EXPIRATION_TIME, claims);
+    public String getAccessToken(String subject, Map<String, Object> claims) {
+        claims.put("type", "access");
+        return this.generate(subject, ACCESS_TOKEN_EXPIRATION_TIME, claims);
     }
 
-    public String refreshToken(String token){
-        Jws<Claims> parsed = this.parse(token);
-        return this.generate(parsed.getPayload().getSubject(), REFRESH_EXPIRATION_TIME, parsed.getPayload().get("user", Map.class));
+    public String getRefreshToken(String subject, Map<String, Object> claims){
+        claims.put("type", "refresh");
+        return this.generate(subject, REFRESH_TOKEN_EXPIRATION_TIME, claims);
     }
 
-    public String extendedToken(String subject, Map<String, Object> claims){
-        claims.put("extended", "true");
+    public String getPermanentToken(String subject, Map<String, Object> claims){
+        claims.put("type", "permanent");
         return Jwts.builder()
                 .subject(subject)
                 .audience().add(audiences).and()
@@ -81,12 +75,7 @@ public class Jwt {
                 .compact();
     }
 
-    public String extendedToken(String token){
-        Jws<Claims> parsed = this.parse(token);
-        return this.extendedToken(parsed.getPayload().getSubject(),  parsed.getPayload().get("user", Map.class));
-    }
-
-    private Jws<Claims> parse(String token) {
+    public Jws<Claims> parse(String token) throws JwtException {
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
     }
 
@@ -113,6 +102,13 @@ public class Jwt {
             Claims claims = this.parse(token).getPayload();
             if(!this.validate(token))
                 throw new AuthHubException(HttpStatus.UNAUTHORIZED, "Invalid or expired JWT token");
+
+            String tokenType = claims.get("type", String.class);
+            if(tokenType == null)
+                throw new AuthHubException(HttpStatus.FORBIDDEN, "Invalid JWT token");
+
+            if(tokenType.equals("refresh"))
+                throw new AuthHubException(HttpStatus.FORBIDDEN, "Only access tokens are allowed");
 
             String stringAuthorities = claims.get("Authorities", String.class);
             Collection<? extends GrantedAuthority> authorities = Arrays.stream(stringAuthorities.split(" ")).toList().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
