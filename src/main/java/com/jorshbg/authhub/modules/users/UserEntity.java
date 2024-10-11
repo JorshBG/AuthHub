@@ -1,6 +1,5 @@
 package com.jorshbg.authhub.modules.users;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jorshbg.authhub.modules.logs.LogEntity;
@@ -13,9 +12,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -73,6 +69,10 @@ public class UserEntity {
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER, mappedBy = "user")
     private List<UserRole> roles;
 
+    /**
+     * Default role representation for the relationship
+     * @return {@link List} of role names
+     */
     @JsonProperty("roles")
     public List<String> getArrayRoles(){
         return this.roles.stream()
