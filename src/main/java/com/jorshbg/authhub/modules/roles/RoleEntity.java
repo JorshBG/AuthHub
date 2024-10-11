@@ -1,5 +1,6 @@
 package com.jorshbg.authhub.modules.roles;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jorshbg.authhub.modules.role_permissions.RolePermission;
 import com.jorshbg.authhub.modules.user_roles.UserRole;
 import jakarta.persistence.*;
@@ -31,9 +32,11 @@ public class RoleEntity {
     private String name;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "role")
+    @JsonIgnore
     private List<UserRole> users;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "role")
+    @JsonIgnore
     private List<RolePermission> permissions;
 
 }
