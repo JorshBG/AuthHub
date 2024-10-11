@@ -30,11 +30,6 @@ public class PermissionEntity {
     @Size(max = 20)
     private String name;
 
-    @NotBlank
-    @NotNull
-    @Size(max = 20)
-    private String type;
-
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "permission")
     @JsonIgnore
     private List<RolePermission> roles;
