@@ -1,4 +1,4 @@
-package com.jorshbg.authhub.modules.roles;
+package com.jorshbg.authhub.modules.logs;
 
 import com.jorshbg.authhub.modules.common.IAuthHubRepository;
 import org.springframework.stereotype.Repository;
@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface IRoleRepository extends IAuthHubRepository<RoleEntity, UUID> {
+public interface ILogRepository extends IAuthHubRepository<LogEntity, UUID> {
 }

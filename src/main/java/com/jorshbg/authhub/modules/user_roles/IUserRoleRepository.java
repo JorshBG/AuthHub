@@ -1,8 +1,8 @@
 package com.jorshbg.authhub.modules.user_roles;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.jorshbg.authhub.modules.common.IAuthHubRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IUserRoleRepository extends JpaRepository<UserRole, UserRolesKey> {
+public interface IUserRoleRepository extends IAuthHubRepository<UserRole, UserRolesKey> {
 }

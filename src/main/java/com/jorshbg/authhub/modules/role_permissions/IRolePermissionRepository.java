@@ -1,8 +1,8 @@
 package com.jorshbg.authhub.modules.role_permissions;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.jorshbg.authhub.modules.common.IAuthHubRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IRolePermissionRepository extends JpaRepository<RolePermission, RolePermissionsKey> {
+public interface IRolePermissionRepository extends IAuthHubRepository<RolePermission, RolePermissionsKey> {
 }
