@@ -17,30 +17,61 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Json Web Token provider class
+ * It can generate, validate, and set and authentication for the system
+ */
 @Component
 @Slf4j
-public class Jwt {
-
+public class JwtProvider {
+    /**
+     * Unencrypted key of the JWT used to sign the token
+     */
     @Value("${jwt.key}")
     private String stringKey;
-
+    /**
+     * Valid domains to use the jwt
+     */
     @Value("${jwt.audiences}")
     private String stringAudiences;
-
+    /**
+     * Domain that emits the jwt
+     */
     @Value("${jwt.issuer}")
     private String issuer;
-
+    /**
+     * Encrypted key to sign the token
+     */
     private SecretKey key;
+    /**
+     * Default token expiration time for the usable token
+     */
     public static final long ACCESS_TOKEN_EXPIRATION_TIME =  10 * 60 * 1000;
+    /**
+     * Expiration time for the refresh token
+     */
     private static final long REFRESH_TOKEN_EXPIRATION_TIME =  2 * 60 * 60 * 1000;
+    /**
+     * Collection of valid domains to use the token
+     */
     private Collection<String> audiences;
 
+    /**
+     * Initialize the secret key and the audiences.
+     */
     @PostConstruct
     private void init(){
         this.key = Keys.hmacShaKeyFor(stringKey.getBytes(StandardCharsets.UTF_8));
         this.audiences = List.of(stringAudiences.split(","));
     }
 
+    /**
+     * Generate a JWT, can be refresh token or access token
+     * @param subject Name of the user
+     * @param expirationTime Default expiration time
+     * @param claims Additional values in the jwt
+     * @return A JWT in string format
+     */
     private String generate(String subject, long expirationTime, Map<String, Object> claims) {
         return Jwts.builder()
                 .subject(subject)
@@ -53,16 +84,34 @@ public class Jwt {
                 .compact();
     }
 
+    /**
+     * Generate access token
+     * @param subject Name of the user
+     * @param claims Additional values in the jwt
+     * @return A JWT in string format
+     */
     public String getAccessToken(String subject, Map<String, Object> claims) {
         claims.put("type", "access");
         return this.generate(subject, ACCESS_TOKEN_EXPIRATION_TIME, claims);
     }
 
+    /**
+     * Generate refresh token
+     * @param subject Name of the user
+     * @param claims Additional values in the jwt
+     * @return A JWT in string format
+     */
     public String getRefreshToken(String subject, Map<String, Object> claims){
         claims.put("type", "refresh");
         return this.generate(subject, REFRESH_TOKEN_EXPIRATION_TIME, claims);
     }
 
+    /**
+     * Generate a permanent token
+     * @param subject Name of the user
+     * @param claims Additional values in the jwt
+     * @return A JWT in string format
+     */
     public String getPermanentToken(String subject, Map<String, Object> claims){
         claims.put("type", "permanent");
         return Jwts.builder()
@@ -75,11 +124,33 @@ public class Jwt {
                 .compact();
     }
 
+    /**
+     * Get the claims into the JWT
+     * @param token String format json web token
+     * @return Claims of the token
+     * @throws JwtException if the token cannot be parsed
+     */
     public Jws<Claims> parse(String token) throws JwtException {
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
     }
 
-    public boolean validateAudience(String token){
+    /**
+     * Get the username of the user
+     * @param token JWT token valid
+     * @return The username
+     * @throws JwtException If the token is invalid or expired
+     */
+    public String getUsername(String token) throws JwtException {
+        return this.parse(token).getPayload().getSubject();
+    }
+
+    /**
+     * Validate audiences of the token
+     * @param token String format json web token
+     * @return true - if the token has a valid audience otherwise, return false
+     * @throws JwtException if the token cannot be parsed
+     */
+    public boolean validateAudience(String token) throws JwtException {
         Jws<Claims> parsed = this.parse(token);
         for(String audience : audiences) {
             if (parsed.getPayload().getAudience().contains(audience)) {
@@ -89,10 +160,20 @@ public class Jwt {
         return false;
     }
 
-    public boolean isExpired(String token){
+    /**
+     * Validate the expiration date
+     * @param token String format json web token
+     * @return true - if the token has a valid expiration date, return false
+     */
+    public boolean isExpired(String token) throws JwtException {
         return this.parse(token).getPayload().getExpiration().before(new Date(System.currentTimeMillis()));
     }
 
+    /**
+     * Validate a token and generate an authentication for the user that is trying to access to the resources
+     * @param token String format json web token
+     * @return Authentication for the user
+     */
     public UsernamePasswordAuthenticationToken getAuthentication(String token){
         try {
             Claims claims = this.parse(token).getPayload();

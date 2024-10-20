@@ -1,9 +1,14 @@
 package com.jorshbg.authhub.modules.permissions;
 
 import com.jorshbg.authhub.modules.common.IAuthHubRepository;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import java.util.UUID;
 
+/**
+ * Default repository to access to the permissions table in database
+ *
+ * @see PermissionEntity
+ */
 @Repository
-public interface IPermissionRepository extends IAuthHubRepository<PermissionEntity, Long> {
+public interface IPermissionRepository extends IAuthHubRepository<PermissionEntity, UUID> {
 }

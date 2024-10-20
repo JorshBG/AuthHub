@@ -5,9 +5,13 @@ import com.jorshbg.authhub.utils.responses.DataResponse;
 import com.jorshbg.authhub.utils.responses.PaginatedResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-
 import java.util.UUID;
 
+/**
+ * CRUD default functions for services
+ * @param <T> Entity class
+ * @param <DTO> Data transfer object class
+ */
 public interface IAuthHubCRUDService<T, DTO> {
 
     ResponseEntity<DataResponse<T>> store(DTO dto) throws AuthHubException;

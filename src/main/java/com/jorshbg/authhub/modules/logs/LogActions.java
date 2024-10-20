@@ -2,6 +2,9 @@ package com.jorshbg.authhub.modules.logs;
 
 import lombok.Getter;
 
+/**
+ * Log action names to store in the database
+ */
 @Getter
 public enum LogActions {
 

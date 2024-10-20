@@ -8,14 +8,107 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-@AllArgsConstructor
+/**
+ * Metadata response class. This class must have methods to return class objects.
+ */
 @NoArgsConstructor
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MetadataResponse {
-    LocalDateTime timestamp;
+    /**
+     * DateTime of the response, this attribute must be included in all methods
+     */
+    private LocalDateTime timestamp;
 
+    //region Paginated variables
+    /**
+     * Page number
+     */
+    private int page;
+
+    /**
+     * Total items in the slice
+     */
+    private int itemsPerPage;
+
+    /**
+     * Total items in the database
+     */
+    private int totalItems;
+
+    /**
+     * Total pages
+     */
+    private int totalPages;
+
+    /**
+     * Current items in the slice
+     */
+    private int currentItems;
+
+    /**
+     * Exists next page
+     */
+    private boolean hasNext;
+
+    /**
+     * Exists previous page
+     */
+    private boolean hasPrevious;
+
+    //endregion
+
+    /**
+     * Default constructor for only timestamp
+     * @param timestamp DateTime of the response
+     */
+    public MetadataResponse(LocalDateTime timestamp){
+        this.timestamp = timestamp;
+    }
+
+    /**
+     * Constructor for paginated responses
+     * @param timestamp DateTime of the response
+     * @param page Page number
+     * @param itemsPerPage Slice size
+     * @param totalItems total items in the database
+     * @param totalPages Total pages
+     * @param currentItems Current items in the slice
+     * @param hasNext It has next page
+     * @param hasPrevious It has previous page
+     */
+    public MetadataResponse(LocalDateTime timestamp, int page, int itemsPerPage, int totalItems, int totalPages, int currentItems, boolean hasNext, boolean hasPrevious) {
+        this.timestamp = timestamp;
+        this.page = page;
+        this.itemsPerPage = itemsPerPage;
+        this.totalItems = totalItems;
+        this.totalPages = totalPages;
+        this.currentItems = currentItems;
+        this.hasNext = hasNext;
+        this.hasPrevious = hasPrevious;
+    }
+
+    /**
+     * Default metadata response to {@link DataResponse}
+     * @return {@link MetadataResponse}
+     */
     public static MetadataResponse defaultResponse() {
         return new MetadataResponse(LocalDateTime.now(ZoneId.systemDefault()));
     }
+
+    /**
+     * Default paginated metadata response to {@link PaginatedResponse}
+     * @param page Page number
+     * @param itemsPerPage Slice size
+     * @param currentItems Current items in the slice
+     * @param totalItems total items in the database
+     * @param hasNext It has next page
+     * @param hasPrevious It has previous page
+     * @param totalPages Total pages
+     * @return {@link MetadataResponse}
+     */
+    public static MetadataResponse paginatedMetadataResponse(final int page, final int itemsPerPage, final int currentItems, final int totalItems, final boolean hasNext, final boolean hasPrevious, final int totalPages) {
+        return new MetadataResponse(LocalDateTime.now(ZoneId.systemDefault()), page, itemsPerPage, totalItems, totalPages, currentItems, hasNext, hasPrevious);
+    }
+
 }
