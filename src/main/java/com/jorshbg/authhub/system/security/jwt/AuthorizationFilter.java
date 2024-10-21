@@ -30,7 +30,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestPath = request.getRequestURI();
-        if (requestPath.startsWith("/api/v1/auth/")) {
+        if (requestPath.startsWith("/api/v1/auth/") || requestPath.startsWith("/login")) {
             filterChain.doFilter(request, response);
             return;
         }
