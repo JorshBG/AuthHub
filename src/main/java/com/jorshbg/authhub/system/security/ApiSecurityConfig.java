@@ -20,9 +20,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.method.HandlerTypePredicate;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +37,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
-public class ApiSecurityConfig {
+public class ApiSecurityConfig implements WebMvcConfigurer {
 
     /**
      * Redefined class UserDetailsService injected
@@ -69,14 +74,16 @@ public class ApiSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager manager) throws Exception {
         AuthenticationFilter authFilter = new AuthenticationFilter(jwtProvider);
         authFilter.setAuthenticationManager(manager);
-        authFilter.setFilterProcessesUrl("/auth/login");
+        authFilter.setFilterProcessesUrl("/api/v1/auth/login");
 
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(authorized -> {
-           authorized.requestMatchers("/auth/login").permitAll();
+           authorized.requestMatchers( "/api/v1/auth/login").permitAll();
+           authorized.requestMatchers( "/login").permitAll();
            authorized.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
            authorized.anyRequest().authenticated();
         });
+        http.formLogin(form -> form.loginPage("/login"));
         http.exceptionHandling(handler -> {
            handler.accessDeniedHandler(deniedHandler());
         });
@@ -109,6 +116,11 @@ public class ApiSecurityConfig {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
+    }
+
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        configurer.addPathPrefix("/api/v1", HandlerTypePredicate.forAnnotation(RestController.class));
     }
 
     /**
