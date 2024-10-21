@@ -109,7 +109,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public ResponseEntity<DataResponse<UserEntity>> me() throws AuthHubException {
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader("Authorization").substring(7);
         UserEntity user = this.userRepository.findByUsernameAndStatus(jwtProvider.getUsername(token), true).orElseThrow(
                 () -> new AuthHubException(HttpStatus.NOT_FOUND, "User not found"));
         return ResponseEntity.ok(new DataResponse<>(user, MetadataResponse.defaultResponse()));
