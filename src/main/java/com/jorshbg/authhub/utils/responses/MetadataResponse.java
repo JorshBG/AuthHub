@@ -24,37 +24,37 @@ public class MetadataResponse {
     /**
      * Page number
      */
-    private int page;
+    private Integer page;
 
     /**
      * Total items in the slice
      */
-    private int itemsPerPage;
+    private Integer itemsPerPage;
 
     /**
      * Total items in the database
      */
-    private int totalItems;
+    private Integer totalItems;
 
     /**
      * Total pages
      */
-    private int totalPages;
+    private Integer totalPages;
 
     /**
      * Current items in the slice
      */
-    private int currentItems;
+    private Integer currentItems;
 
     /**
      * Exists next page
      */
-    private boolean hasNext;
+    private Boolean hasNext;
 
     /**
      * Exists previous page
      */
-    private boolean hasPrevious;
+    private Boolean hasPrevious;
 
     //endregion
 
