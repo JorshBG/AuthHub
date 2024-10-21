@@ -2,6 +2,7 @@ package com.jorshbg.authhub.system.security.jwt;
 
 import com.jorshbg.authhub.modules.users.IUserRepository;
 import com.jorshbg.authhub.modules.users.UserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     /**
      * Injected repository of the user
      */
+    @Autowired
     private IUserRepository userRepository;
 
     /**
