@@ -1,0 +1,64 @@
+body, html {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    font-family: Roboto, Arial, sans-serif;
+}
+
+.main {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    background-color:#F8F8F8;
+    justify-content: center;
+}
+
+.signin {
+    border-radius: 2rem;
+    background-color:white;
+    box-shadow: 8px 8px 10px 12px #F3F3F3;
+}
+
+.signin-content {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    padding: 2rem;
+
+    .content-form {
+        /*margin: 0 4rem;*/
+        .form-title {
+            font-size: xx-large;
+        }
+        .login-form {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            gap: 2rem;
+        }
+        .form-group {
+            input[type="text"], input[type="password"] {
+                padding: 0.5rem 1rem;
+                border: none;
+                border-radius: 0;
+                border-bottom: 1px solid black;
+                outline:none;
+            }
+            input[type="submit"]{
+                padding: 0.6rem 2rem;
+            }
+
+            width: 100%;
+        }
+        width: fit-content;
+    }
+
+    .content-image {
+
+    }
+}
+
+

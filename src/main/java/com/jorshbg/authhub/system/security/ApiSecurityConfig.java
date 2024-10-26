@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,7 +26,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.method.HandlerTypePredicate;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
@@ -79,6 +82,7 @@ public class ApiSecurityConfig implements WebMvcConfigurer {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(authorized -> {
            authorized.requestMatchers( "/api/v1/auth/login").permitAll();
+           authorized.requestMatchers( "/css/**", "/js/**", "/img/**", "/fonts/**").permitAll();
            authorized.requestMatchers( "/login").permitAll();
            authorized.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
            authorized.anyRequest().authenticated();
@@ -121,6 +125,23 @@ public class ApiSecurityConfig implements WebMvcConfigurer {
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.addPathPrefix("/api/v1", HandlerTypePredicate.forAnnotation(RestController.class));
+    }
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.mediaType("css", MediaType.valueOf("text/css"));
+        configurer.mediaType("woff2", MediaType.valueOf("font/woff2"));
+        configurer.mediaType("js", MediaType.valueOf("application/javascript; charset=UTF-8"));
+        configurer.mediaType("jpeg", MediaType.valueOf("image/jpeg"));
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+        registry.addResourceHandler("/css/**").addResourceLocations("classpath:/static/css/");
+        registry.addResourceHandler("/img/**").addResourceLocations("classpath:/static/img/");
+        registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js/");
+        registry.addResourceHandler("/fonts/**").addResourceLocations("classpath:/static/fonts/");
     }
 
     /**

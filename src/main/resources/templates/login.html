@@ -2,10 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign Up Form by Colorlib</title>
+
+    <!--  Fonts  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+          rel="stylesheet">
+    <!-- Main css -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <h1>This is the login</h1>
-<p>it works!</p>
-</body>
+
+<div class="main">
+
+    <!-- Sing in  Form -->
+    <section class="signin">
+        <div class="signin-content content">
+            <div class="content-image">
+                <figure><img th:src="@{/img/red3d-girl.png}" alt="sing up image" width="400"></figure>
+            </div>
+
+            <div class="content-form form">
+                <h2 class="form-title">Sign up</h2>
+                <form method="POST" class="login-form" id="login-form">
+                    <div class="form-group">
+                        <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                        <input type="text" name="your_name" id="your_name" placeholder="Your Name"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
+                        <input type="password" name="your_pass" id="your_pass" placeholder="Password"/>
+                    </div>
+                    <!--                            <div class="form-group">-->
+                    <!--                                <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />-->
+                    <!--                                <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label>-->
+                    <!--                            </div>-->
+                    <div class="form-group form-button">
+                        <input type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>
+                    </div>
+                </form>
+                <div class="form-links">
+                    <span class="social-label">Visit us </span>
+                    <ul class="socials">
+                        <li><a href="#"><i class="fa-brands fa-tiktok"></i></a></li>
+                        <li><a href="#"><i class="fa-brands fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="fa-brands fa-x-twitter"></i></a></li>
+                        <li><a href="#"><i class="fa-brands fa-square-instagram"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- JS -->
+<script src="https://kit.fontawesome.com/7d26f8edd8.js" crossorigin="anonymous"></script>
+<!--    <script src="vendor/jquery/jquery.min.js"></script>-->
+<!--    <script src="js/main.js"></script>-->
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
 </html>
