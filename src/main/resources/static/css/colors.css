@@ -1,0 +1,8 @@
+:root {
+    --bg-primary: #f1f1f1;
+    --text-primary: #fff;
+    --text-acent-primary: #5c69ff;
+    --text-danger: #ff5c5c;
+    --input-radius: 0.2rem;
+    --bg-white: #fff;
+}
