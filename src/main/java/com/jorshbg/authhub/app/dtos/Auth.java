@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 /**
  * DTO for the authentication user credentials
  * @param password Password of the user
- * @param username Name of the user
+ * @param email Name of the user
  */
 public record Auth(
         @Size(min = 1, max = 50)
@@ -14,5 +14,5 @@ public record Auth(
         String password,
         @NotBlank
         @Size(min = 2, max = 50)
-        String username
+        String email
 ) {}

@@ -52,7 +52,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         }
 
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                credentials.username(),
+                credentials.email(),
                 credentials.password(),
                 Collections.emptyList());
 

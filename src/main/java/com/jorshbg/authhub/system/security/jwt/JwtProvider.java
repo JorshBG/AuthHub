@@ -135,12 +135,12 @@ public class JwtProvider {
     }
 
     /**
-     * Get the username of the user
+     * Get the email of the user
      * @param token JWT token valid
-     * @return The username
+     * @return The email
      * @throws JwtException If the token is invalid or expired
      */
-    public String getUsername(String token) throws JwtException {
+    public String getSubject(String token) throws JwtException {
         return this.parse(token).getPayload().getSubject();
     }
 
