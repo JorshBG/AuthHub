@@ -42,12 +42,12 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
-     * Get the username as string
-     * @return String of username
+     * Get the email as string
+     * @return String of email
      */
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
 
     /**
