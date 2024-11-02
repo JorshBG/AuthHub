@@ -2,6 +2,8 @@ package com.jorshbg.authhub.modules.roles;
 
 import com.jorshbg.authhub.modules.common.IAuthHubRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -11,4 +13,5 @@ import java.util.UUID;
  */
 @Repository
 public interface IRoleRepository extends IAuthHubRepository<RoleEntity, UUID> {
+    Optional<RoleEntity> findByName(String name);
 }
