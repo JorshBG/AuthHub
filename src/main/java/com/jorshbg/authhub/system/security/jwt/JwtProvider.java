@@ -201,4 +201,8 @@ public class JwtProvider {
             throw new AuthHubException(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
         }
     }
+
+    public String getEmailToken(String subject) {
+        return this.generate(subject, REFRESH_TOKEN_EXPIRATION_TIME, Map.of("type", "email"));
+    }
 }

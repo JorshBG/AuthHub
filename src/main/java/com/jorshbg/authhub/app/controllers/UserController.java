@@ -1,8 +1,8 @@
 package com.jorshbg.authhub.app.controllers;
 
 import com.jorshbg.authhub.modules.users.IUserRepository;
-import com.jorshbg.authhub.modules.users.IUserService;
 import com.jorshbg.authhub.modules.users.UserEntity;
+import com.jorshbg.authhub.modules.users.UserService;
 import com.jorshbg.authhub.system.security.jwt.JwtProvider;
 import com.jorshbg.authhub.utils.responses.DataResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class UserController {
      * User service injected, this injects its default implementation
      */
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     /**
      * GET - Get the default information about the user that make the request

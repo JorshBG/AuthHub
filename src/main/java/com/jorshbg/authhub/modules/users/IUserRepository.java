@@ -20,4 +20,6 @@ public interface IUserRepository extends IAuthHubRepository<UserEntity, UUID> {
      * @return Optional to manage the response and trow an exception if the user not found
      */
     Optional<UserEntity> findByUsernameAndStatus(String username, Boolean status);
+
+    Optional<UserEntity> findByEmailAndStatus(String mail, Boolean b);
 }
