@@ -25,10 +25,10 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class PermissionRolesTests {
 
-    @InjectMocks
+    @Mock
     private IRolePermissionRepository relationRepository;
 
-    @Mock
+    @InjectMocks
     private RolePermissionService relationService;
 
     UUID roleId;

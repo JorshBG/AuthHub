@@ -23,10 +23,10 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class UserRolesTests {
 
-    @InjectMocks
+    @Mock
     private IUserRoleRepository relationshipRepository;
 
-    @Mock
+    @InjectMocks
     private UserRolesService relationshipService;
 
     @BeforeEach

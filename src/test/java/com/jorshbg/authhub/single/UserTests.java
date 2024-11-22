@@ -8,6 +8,7 @@ import com.jorshbg.authhub.modules.users.UserService;
 import com.jorshbg.authhub.system.exceptions.AuthHubException;
 import com.jorshbg.authhub.system.security.jwt.JwtProvider;
 import com.jorshbg.authhub.utils.request_params.UserGetParams;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -39,6 +40,9 @@ public class UserTests {
 
     @Mock
     private PasswordEncoder encoder;
+
+    @Mock
+    private HttpServletRequest request;
 
     @Mock
     private JwtProvider jwt;
@@ -190,8 +194,10 @@ public class UserTests {
 
     @Test
     void testMe(){
-        UserEntity user = new UserEntity();
-
+        UserEntity user = new UserEntity(UUID.randomUUID(), "Jordi2", "Yair2", "jordi", "", "jordi@itsoeh.edu.mx", "7721446962", "$2a$10$58hJfwErSVJ8JYU4V07sMOYLoJTw/ALfIcQ0rsXJK8uvYIwQsUbn.", true, null, null);
+        String token = "ey5a8nspa1ldkas";
+        when(this.request.getHeader("Authorization")).thenReturn("Bearer" + token);
+        when(this.jwt.getSubject(token)).thenReturn("jordi");
         when(this.repository.findByUsernameAndStatus("jordi", true)).thenReturn(Optional.of(user));
 
         var res = this.service.me();
