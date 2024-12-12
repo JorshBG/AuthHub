@@ -1,7 +1,6 @@
 package com.jorshbg.authhub.utils.responses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -34,7 +33,7 @@ public class MetadataResponse {
     /**
      * Total items in the database
      */
-    private Integer totalItems;
+    private Long totalItems;
 
     /**
      * Total pages
@@ -77,7 +76,7 @@ public class MetadataResponse {
      * @param hasNext It has next page
      * @param hasPrevious It has previous page
      */
-    public MetadataResponse(LocalDateTime timestamp, int page, int itemsPerPage, int totalItems, int totalPages, int currentItems, boolean hasNext, boolean hasPrevious) {
+    public MetadataResponse(LocalDateTime timestamp, int page, int itemsPerPage, long totalItems, int totalPages, int currentItems, boolean hasNext, boolean hasPrevious) {
         this.timestamp = timestamp;
         this.page = page;
         this.itemsPerPage = itemsPerPage;
@@ -107,7 +106,7 @@ public class MetadataResponse {
      * @param totalPages Total pages
      * @return {@link MetadataResponse}
      */
-    public static MetadataResponse paginatedMetadataResponse(final int page, final int itemsPerPage, final int currentItems, final int totalItems, final boolean hasNext, final boolean hasPrevious, final int totalPages) {
+    public static MetadataResponse paginatedMetadataResponse(final int page, final int itemsPerPage, final int currentItems, final long totalItems, final boolean hasNext, final boolean hasPrevious, final int totalPages) {
         return new MetadataResponse(LocalDateTime.now(ZoneId.systemDefault()), page, itemsPerPage, totalItems, totalPages, currentItems, hasNext, hasPrevious);
     }
 
