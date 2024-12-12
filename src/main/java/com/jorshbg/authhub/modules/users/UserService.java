@@ -5,12 +5,9 @@ import com.jorshbg.authhub.app.dtos.UserDto;
 import com.jorshbg.authhub.system.exceptions.AuthHubException;
 import com.jorshbg.authhub.system.security.jwt.JwtProvider;
 import com.jorshbg.authhub.utils.request_params.UserGetParams;
-import com.jorshbg.authhub.utils.responses.DataResponse;
-import com.jorshbg.authhub.utils.responses.MetadataResponse;
-import com.jorshbg.authhub.utils.responses.PaginatedResponse;
-import com.jorshbg.authhub.utils.responses.RecoverPasswordResponse;
+import com.jorshbg.authhub.utils.responses.*;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,20 +24,22 @@ public class UserService {
     /**
      * Inject request class to get headers
      */
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
     /**
      * Inject repository user class to make queries
      */
-    @Autowired
-    private IUserRepository userRepository;
+    private final IUserRepository userRepository;
 
     /**
      * Inject jwt provider class to parse the token
      */
-    @Autowired
-    private JwtProvider jwtProvider;
+    private final JwtProvider jwtProvider;
 
+    public UserService(HttpServletRequest request, IUserRepository userRepository, JwtProvider jwtProvider) {
+        this.request = request;
+        this.userRepository = userRepository;
+        this.jwtProvider = jwtProvider;
+    }
 
 
     /**
@@ -69,14 +68,25 @@ public class UserService {
     }
 
     public ResponseEntity<PaginatedResponse<UserEntity>> getAllAsPage(UserGetParams params, int pageNumber, int size, String orderBy, Sort.Direction direction) {
-        return null;
+        pageNumber = Math.max(pageNumber, 0);
+        size = Math.max(size, 10);
+        var pageable = PageRequest.of(pageNumber, size, Sort.by(direction, orderBy));
+        var page = this.userRepository.findAll(pageable);
+        if(page.getTotalPages() == 0) throw new AuthHubException(HttpStatus.NOT_FOUND, "No pages found");
+        if(pageNumber > page.getTotalPages()) throw new AuthHubException(HttpStatus.NOT_FOUND, "No more pages");
+        if(page.getTotalElements() == 0) throw new AuthHubException(HttpStatus.NOT_FOUND, "No more elements");
+        return AuthHubResponse.paginated(page);
     }
 
-    public ResponseEntity<List<UserEntity>> getAllAsList(UserGetParams params) {
-        return null;
+    public ResponseEntity<DataResponse<List<UserEntity>>> getAllAsList(UserGetParams params) {
+        List<UserEntity> users = userRepository.findAll();
+        if(users.isEmpty()) throw new AuthHubException(HttpStatus.NOT_FOUND, "Users not found");
+        return AuthHubResponse.data(users);
     }
 
-    public ResponseEntity<DataResponse<UserEntity>> store(UserDto dto) {
-        return null;
+    public ResponseEntity<DataResponse<UserEntity>> store(UserDto dto) throws AuthHubException {
+        var user = IUserMapper.INSTANCE.toEntity(dto);
+        var saved = this.userRepository.save(user);
+        return AuthHubResponse.data(saved, HttpStatus.CREATED);
     }
 }

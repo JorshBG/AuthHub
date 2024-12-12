@@ -6,7 +6,6 @@ import com.jorshbg.authhub.modules.users.UserService;
 import com.jorshbg.authhub.system.security.jwt.JwtProvider;
 import com.jorshbg.authhub.utils.responses.DataResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +23,11 @@ public class UserController {
     /**
      * User service injected, this injects its default implementation
      */
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * GET - Get the default information about the user that make the request
