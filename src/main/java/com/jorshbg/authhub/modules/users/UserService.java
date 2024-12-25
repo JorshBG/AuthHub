@@ -29,7 +29,6 @@ public class UserService {
      * Inject repository user class to make queries
      */
     private final IUserRepository userRepository;
-
     /**
      * Inject jwt provider class to parse the token
      */
@@ -40,8 +39,6 @@ public class UserService {
         this.userRepository = userRepository;
         this.jwtProvider = jwtProvider;
     }
-
-
     /**
      * Get the user information using the username in the token
      *
