@@ -1,0 +1,58 @@
+pipeline {
+
+    agent any
+
+    environment {
+        NEW_VERSION = '1.0.0'
+    }
+
+    tools {
+        gradle 'Gradle'
+    }
+
+    parameters {
+        string(name: 'APP', defaultValue: 'AuthHub', description: 'Application name')
+        choice(name: 'SERVER', choices: ['fedora', 'centos', 'ubuntu'], description: 'Server to deploy the application')
+        booleanParam(name: 'TEST', defaultValue: true, description: 'Indicates if the test must be exec')
+    }
+
+    stages {
+
+        stage('build') {
+
+            steps {
+                echo "building... version ${NEW_VERSION}"
+            }
+        }
+
+        stage('test') {
+            when {
+                expression {
+                    params.TEST
+                }
+            }
+            steps {
+                echo 'testing...'
+            }
+        }
+
+        stage('deploy') {
+
+            steps {
+                echo "deploying on server: ${params.SERVER}"
+            }
+        }
+    }
+
+    post {
+    // exec after all stages
+        always {
+
+        }
+        success {
+
+        }
+        failure {
+        }
+    }
+}
