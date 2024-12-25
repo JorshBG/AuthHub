@@ -6,9 +6,9 @@ pipeline {
         NEW_VERSION = '1.0.0'
     }
 
-    tools {
+    //tools { // tools to use, only supported: MAVEN, GRADLE and JDK
         // gradle 'Gradle'
-    }
+    //}
 
     parameters {
         string(name: 'APP', defaultValue: 'AuthHub', description: 'Application name')
