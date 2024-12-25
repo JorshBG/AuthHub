@@ -7,7 +7,7 @@ pipeline {
     }
 
     tools {
-        gradle 'Gradle'
+        // gradle 'Gradle'
     }
 
     parameters {
@@ -47,12 +47,13 @@ pipeline {
     post {
     // exec after all stages
         always {
-
+            echo 'it\'s all'
         }
         success {
-
+            echo 'the file is perfect state'
         }
         failure {
+            echo 'idk w happen'
         }
     }
 }
